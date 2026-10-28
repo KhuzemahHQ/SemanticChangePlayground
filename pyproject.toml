@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "semantic-change"
+version = "1.0.0"
+description = "Toolkit and interactive studio to measure lexical semantic change over history using Google Books Ngrams, HistWords diachronic embeddings, and custom historical corpora."
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [{name = "Semantic Change Playground Team"}]
+dependencies = [
+    "numpy>=1.22.0",
+    "scipy>=1.8.0",
+    "scikit-learn>=1.0.0",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.20.0",
+    "pydantic>=2.0.0",
+]
+
+[project.scripts]
+semantic-change = "semantic_change.cli:main"
+chronosense = "semantic_change.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["semantic_change*"]

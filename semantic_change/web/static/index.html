@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChronoSense | Diachronic Semantic Change Studio</title>
+  <meta name="description" content="Scientific research platform and interactive studio for measuring diachronic lexical semantic change across history using Google Books Ngrams and Stanford HistWords embeddings.">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- Global App Header -->
+  <header class="app-header">
+    <div class="brand-container">
+      <div class="brand-icon">⏳</div>
+      <div class="brand-text">
+        <h1>ChronoSense</h1>
+        <div class="brand-subtitle">Diachronic Semantic Change Studio</div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs" id="mainNav">
+      <button class="nav-tab active" data-tab="tab-explorer">🔍 Word Explorer</button>
+      <button class="nav-tab" data-tab="tab-compare">⚔️ Comparative Studio</button>
+      <button class="nav-tab" data-tab="tab-trajectory">🌌 2D Time Machine</button>
+      <button class="nav-tab" data-tab="tab-semeval">📊 SemEval-2020</button>
+      <button class="nav-tab" data-tab="tab-custom">🧪 Custom Corpus Lab</button>
+      <button class="nav-tab" data-tab="tab-methodology">📖 Methodology & Laws</button>
+    </nav>
+
+    <!-- System Status Pill -->
+    <div class="status-pill" id="statusPill">
+      <span class="status-dot"></span>
+      <span id="statusText">HistWords (1800–1990) Ready</span>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-content">
+
+    <!-- ===================================================================
+         TAB 1: WORD EXPLORER
+         =================================================================== -->
+    <section class="tab-pane active" id="tab-explorer">
+      <!-- Search & Controls -->
+      <div class="glass-card search-control-bar">
+        <div class="search-input-group">
+          <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="explorerSearchInput" class="main-search-input" placeholder="Search historical word (e.g. gay, mouse, apple, cell, broadcast, plane, awful, nice)..." value="gay">
+          </div>
+          <select id="explorerCorpusSelect" class="corpus-select">
+            <option value="en-2019" selected>Google Books: English (2019)</option>
+            <option value="en-US-2019">Google Books: American (2019)</option>
+            <option value="en-GB-2019">Google Books: British (2019)</option>
+            <option value="en-fiction-2019">Google Books: Fiction (2019)</option>
+          </select>
+          <button id="explorerSearchBtn" class="btn-primary">
+            <span>Analyze Diachronic Shift</span>
+          </button>
+        </div>
+
+        <!-- Quick Benchmark Chips -->
+        <div class="quick-chips-container">
+          <span class="quick-label">Case Studies:</span>
+          <button class="quick-chip active" data-word="gay">gay</button>
+          <button class="quick-chip" data-word="mouse">mouse</button>
+          <button class="quick-chip" data-word="apple">apple</button>
+          <button class="quick-chip" data-word="cell">cell</button>
+          <button class="quick-chip" data-word="broadcast">broadcast</button>
+          <button class="quick-chip" data-word="plane">plane</button>
+          <button class="quick-chip" data-word="awful">awful</button>
+          <button class="quick-chip" data-word="nice">nice</button>
+          <button class="quick-chip" data-word="terrific">terrific</button>
+          <button class="quick-chip" data-word="silly">silly</button>
+          <button class="quick-chip" data-word="meat">meat</button>
+          <button class="quick-chip" data-word="cloud">cloud</button>
+          <button class="quick-chip" data-word="virus">virus</button>
+          <button class="quick-chip" data-word="virtual">virtual</button>
+          <button class="quick-chip" data-word="quarantine">quarantine</button>
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="kpi-grid" id="explorerKpiGrid">
+        <div class="kpi-card">
+          <div class="kpi-title">
+            <span>Total Displacement</span>
+            <span>📏</span>
+          </div>
+          <div class="kpi-value" id="kpiDisplacement">--</div>
+          <div class="kpi-sub" id="kpiDecadeRange">Cosine Distance (1800s → 1990s)</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-title">
+            <span>Peak Velocity Era</span>
+            <span>⚡</span>
+          </div>
+          <div class="kpi-value" id="kpiPeakVelocity">--</div>
+          <div class="kpi-sub" id="kpiPeakRate">Era of steepest semantic drift</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-title">
+            <span>Historical Frequency</span>
+            <span>📈</span>
+          </div>
+          <div class="kpi-value" id="kpiFrequencyPattern">--</div>
+          <div class="kpi-sub" id="kpiPeakYear">Google Books Ngram Dynamic</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-title">
+            <span>Semantic Classification</span>
+            <span>🏷️</span>
+          </div>
+          <div class="kpi-value" id="kpiClassification">--</div>
+          <div class="kpi-sub" id="kpiClassificationSub">Linguistic shift typology</div>
+        </div>
+      </div>
+
+      <!-- Historical Narrative & Senses -->
+      <div class="narrative-box" id="explorerNarrativeBox">
+        <div class="narrative-header">
+          <span style="font-size: 1.25rem;">📜</span>
+          <div class="narrative-title" id="narrativeTitle">Historical Semantic Evolution</div>
+        </div>
+        <div class="narrative-content" id="narrativeContext">
+          Loading historical context...
+        </div>
+        <div class="senses-grid">
+          <div class="sense-box">
+            <div class="sense-label">Historical Sense (c. 1800s)</div>
+            <div class="sense-text" id="sense1800s">--</div>
+          </div>
+          <div class="sense-box modern">
+            <div class="sense-label">Modern Sense (c. 2000s)</div>
+            <div class="sense-text" id="sense2000s">--</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dual Charts Grid -->
+      <div class="charts-grid">
+        <!-- Frequency Chart -->
+        <div class="glass-card">
+          <div class="chart-header">
+            <h3><span>📚</span> Google Books Ngram Historical Frequency</h3>
+            <span class="chart-badge">1800–2019 (Annual)</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="frequencyChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Semantic Drift Chart -->
+        <div class="glass-card">
+          <div class="chart-header">
+            <h3><span>🌐</span> Vector Semantic Drift & Velocity</h3>
+            <span class="chart-badge">1800–1990 (Decadal)</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="driftChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Historical Neighborhoods Timeline -->
+      <div class="glass-card neighbors-section">
+        <div class="section-title">
+          <span>👥</span> Semantic Neighborhood Evolution (Nearest Historical Peers Across Decades)
+        </div>
+        <div class="decades-timeline-row" id="neighborsTimelineRow">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         TAB 2: COMPARATIVE STUDIO
+         =================================================================== -->
+    <section class="tab-pane" id="tab-compare">
+      <div class="glass-card search-control-bar">
+        <div class="search-input-group">
+          <div class="search-wrapper">
+            <span class="search-icon">⚔️</span>
+            <input type="text" id="compareInput" class="main-search-input" placeholder="Enter comma-separated words to compare..." value="gay, apple, mouse, cell, plane">
+          </div>
+          <button id="compareBtn" class="btn-primary">
+            <span>Compare Historical Trajectories</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="glass-card">
+          <div class="chart-header">
+            <h3><span>📈</span> Superimposed Semantic Drift Curves</h3>
+            <span class="chart-badge">Cosine Displacement (1800–1990)</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="compareDriftChart"></canvas>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <div class="chart-header">
+            <h3><span>📊</span> Comparative Frequency Dynamics</h3>
+            <span class="chart-badge">Google Books (1800–2019)</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="compareFreqChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pairwise Cross-Word Similarity Over Decades -->
+      <div class="glass-card">
+        <div class="section-title">
+          <span>🔗</span> Pairwise Cross-Word Semantic Similarities Across Decades
+        </div>
+        <div class="data-table-wrapper" id="pairwiseTableWrapper">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         TAB 3: 2D SEMANTIC TIME MACHINE (CANVAS PROJECTION)
+         =================================================================== -->
+    <section class="tab-pane" id="tab-trajectory">
+      <div class="glass-card trajectory-studio">
+        <div class="search-input-group">
+          <div class="search-wrapper">
+            <span class="search-icon">🌌</span>
+            <input type="text" id="trajectoryWordsInput" class="main-search-input" placeholder="Select words for 2D semantic plane..." value="gay, mouse, apple, cell, plane, computer, animal, fruit, technology">
+          </div>
+          <button id="trajectoryBtn" class="btn-primary">
+            <span>Project Into 2D Space</span>
+          </button>
+        </div>
+
+        <div class="canvas-controls">
+          <div class="playback-controls">
+            <button id="playTrajectoryBtn" class="btn-icon" title="Play Time Machine">▶</button>
+            <div class="timeline-slider-wrapper">
+              <span style="font-size: 0.8rem; color: var(--text-dim);">Era:</span>
+              <input type="range" id="decadeSlider" class="timeline-slider" min="1800" max="1990" step="10" value="1990">
+              <span id="sliderYearLabel" class="sliderYear">1990s</span>
+            </div>
+          </div>
+          <div style="font-size: 0.82rem; color: var(--text-dim);">
+            Method: Orthogonal Procrustes + Global Principal Component Analysis (PCA)
+          </div>
+        </div>
+
+        <div class="canvas-wrapper">
+          <canvas id="trajectoryCanvas"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         TAB 4: SEMEVAL-2020 BENCHMARK SUITE
+         =================================================================== -->
+    <section class="tab-pane" id="tab-semeval">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-title">Spearman Rank Correlation</div>
+          <div class="kpi-value" id="semevalRho">--</div>
+          <div class="kpi-sub">Continuous graded change (Subtask 2)</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Classification F1 Score</div>
+          <div class="kpi-value" id="semevalF1">--</div>
+          <div class="kpi-sub">Binary change detection (Subtask 1)</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Classification Accuracy</div>
+          <div class="kpi-value" id="semevalAcc">--</div>
+          <div class="kpi-sub">Precision / Recall thresholding</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Targets Evaluated</div>
+          <div class="kpi-value" id="semevalCount">--</div>
+          <div class="kpi-sub">Official English Evaluation Lemmas</div>
+        </div>
+      </div>
+
+      <div class="glass-card">
+        <div class="chart-header">
+          <h3><span>🎯</span> SemEval-2020 Task 1 Target Predictions vs. Human Gold Standard</h3>
+          <button id="refreshSemevalBtn" class="btn-primary" style="padding: 0.4rem 0.9rem; font-size: 0.8rem;">Re-evaluate</button>
+        </div>
+        <div class="data-table-wrapper">
+          <table class="data-table" id="semevalTable">
+            <thead>
+              <tr>
+                <th>Target Lemma</th>
+                <th>POS</th>
+                <th>Predicted Displacement</th>
+                <th>Gold Graded Score</th>
+                <th>Gold Binary Label</th>
+                <th>Evaluation Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         TAB 5: CUSTOM DIACHRONIC CORPUS LAB
+         =================================================================== -->
+    <section class="tab-pane" id="tab-custom">
+      <div class="glass-card">
+        <div class="section-title">
+          <span>🧪</span> Train Diachronic Embeddings on Custom Historical Text Corpora
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.2rem;">
+          Supply two plain text corpora representing different historical eras (e.g. 19th-century speeches vs. 21st-century articles). 
+          The pipeline computes Positive Pointwise Mutual Information (PPMI), applies Truncated SVD, and aligns representations with Orthogonal Procrustes.
+        </p>
+
+        <div class="corpus-lab-grid">
+          <div>
+            <label style="font-size: 0.82rem; font-weight: 600; color: var(--accent-cyan); display: block; margin-bottom: 0.4rem;">
+              Historical Era 1 Text (e.g., 1850s)
+            </label>
+            <textarea id="corpusTextT1" class="corpus-textarea" placeholder="Paste historical period 1 text here..."></textarea>
+          </div>
+          <div>
+            <label style="font-size: 0.82rem; font-weight: 600; color: var(--accent-purple); display: block; margin-bottom: 0.4rem;">
+              Historical Era 2 Text (e.g., 2020s)
+            </label>
+            <textarea id="corpusTextT2" class="corpus-textarea" placeholder="Paste historical period 2 text here..."></textarea>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; align-items: center; justify-content: space-between;">
+          <div style="display: flex; gap: 0.8rem; align-items: center;">
+            <button id="loadCorpusPresetBtn" class="quick-chip">Load Sample Corpus (Technology & Science)</button>
+          </div>
+          <button id="runCustomCorpusBtn" class="btn-primary">
+            <span>Process, Align & Measure Shift</span>
+          </button>
+        </div>
+
+        <div id="customCorpusResultsWrapper" style="margin-top: 1.5rem; display: none;">
+          <h4 style="font-family: var(--font-brand); color: #fff; margin-bottom: 0.8rem;">Computed Semantic Shift for Target Words</h4>
+          <div class="data-table-wrapper">
+            <table class="data-table" id="customCorpusTable">
+              <thead>
+                <tr>
+                  <th>Word</th>
+                  <th>Displacement (1 - CosSim)</th>
+                  <th>Freq T1</th>
+                  <th>Freq T2</th>
+                  <th>Period 1 Top Neighbors</th>
+                  <th>Period 2 Top Neighbors</th>
+                  <th>Turnover</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         TAB 6: METHODOLOGY & SCIENTIFIC LAWS
+         =================================================================== -->
+    <section class="tab-pane" id="tab-methodology">
+      <div class="kpi-grid">
+        <div class="kpi-card" style="grid-column: span 2;">
+          <div class="kpi-title">Hamilton et al. Law of Conformity</div>
+          <div class="kpi-value" id="lawConformityResult">Loading...</div>
+          <div class="kpi-sub" id="lawConformityStats">Statistical validation on historical vocabulary</div>
+        </div>
+        <div class="kpi-card" style="grid-column: span 2;">
+          <div class="kpi-title">Procrustes Alignment Principle</div>
+          <div class="kpi-value" style="font-size: 1.25rem; font-family: var(--font-mono); color: var(--accent-cyan);">
+            min_W ||M_1 W - M_2||_F s.t. W^T W = I
+          </div>
+          <div class="kpi-sub">Solution via SVD: M_1^T M_2 = U Σ V^T → W = U V^T</div>
+        </div>
+      </div>
+
+      <div class="glass-card" style="margin-top: 1.5rem;">
+        <div class="section-title"><span>📐</span> Mathematical Formulations & Measurement Protocols</div>
+        <div style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.7; display: flex; flex-direction: column; gap: 1rem;">
+          <div>
+            <strong style="color: #fff;">1. Global Semantic Displacement (Cosine Distance):</strong>
+            <p>For a word <em>w</em> represented at historical time periods <em>t<sub>1</sub></em> and <em>t<sub>2</sub></em> by unit vectors <em>v<sub>w</sub><sup>(t<sub>1</sub>)</sup></em> and <em>v<sub>w</sub><sup>(t<sub>2</sub>)</sup></em>:</p>
+            <code style="background: rgba(0,0,0,0.4); padding: 0.3rem 0.6rem; border-radius: 4px; font-family: var(--font-mono); color: var(--accent-cyan);">
+              Displacement(w, t_1, t_2) = 1 - cos(v_w^(t_1), v_w^(t_2))
+            </code>
+          </div>
+
+          <div>
+            <strong style="color: #fff;">2. Second-Order Contextual Drift Cosine Similarity (CDCS):</strong>
+            <p>An invariant, alignment-free measurement. Evaluates the similarity vector against a stable anchor lexicon <em>A = {a_1, ..., a_m}</em>:</p>
+            <code style="background: rgba(0,0,0,0.4); padding: 0.3rem 0.6rem; border-radius: 4px; font-family: var(--font-mono); color: var(--accent-purple);">
+              Profile^(t)(w) = [cos(v_w^(t), v_(a_i)^(t))] → CDCS(w) = 1 - cos(Profile^(t_1), Profile^(t_2))
+            </code>
+          </div>
+
+          <div>
+            <strong style="color: #fff;">3. Local Neighborhood Turnover (Jaccard Distance):</strong>
+            <p>Quantifies the replacement rate of the top <em>k</em> nearest semantic neighbors:</p>
+            <code style="background: rgba(0,0,0,0.4); padding: 0.3rem 0.6rem; border-radius: 4px; font-family: var(--font-mono); color: var(--accent-emerald);">
+              JaccardTurnover(w, t_1, t_2) = 1 - (|NN_k(t_1) ∩ NN_k(t_2)| / |NN_k(t_1) ∪ NN_k(t_2)|)
+            </code>
+          </div>
+
+          <div>
+            <strong style="color: #fff;">4. Primary Diachronic Datasets:</strong>
+            <ul style="margin-left: 1.5rem; margin-top: 0.4rem;">
+              <li><strong>Google Books Ngram Corpus (1800–2019):</strong> Over 8 million digitized books; live normalized annual timeseries.</li>
+              <li><strong>Stanford HistWords (Hamilton et al. 2016):</strong> SGNS and SVD multi-decadal vector representations aligned via Orthogonal Procrustes.</li>
+              <li><strong>SemEval-2020 Task 1 (Schlechtweg et al. 2020):</strong> Benchmark dataset for unsupervised lexical semantic change detection.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
